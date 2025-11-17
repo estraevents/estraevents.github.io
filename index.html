@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESTRA events</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border: #e0e0e0;
+            --orange: #e67e50;
+            --yellow: #ffd700;
+            --pink: #d8a5c8;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border: #404040;
+            --orange: #ff8c61;
+            --yellow: #ffed4e;
+            --pink: #e0b3d1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            line-height: 1.6;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        header {
+            background: var(--bg-secondary);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 300;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        nav {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-login, .btn-register {
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-login:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .btn-register {
+            background: #3a3a3a;
+            color: white;
+            border: none;
+        }
+
+        .btn-register:hover {
+            background: #4a4a4a;
+        }
+
+        .hero {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero-text .subtitle {
+            font-size: 56px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .subtitle.orange { color: var(--orange); }
+        .subtitle.yellow { color: var(--yellow); }
+        .subtitle.pink { color: var(--pink); }
+
+        .hero-image {
+            width: 100%;
+            height: 400px;
+            background: var(--border);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .section {
+            max-width: 1400px;
+            margin: 100px auto;
+            padding: 0 40px;
+        }
+
+        .section h2 {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 60px;
+            color: var(--text-secondary);
+        }
+
+        .event-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .event-image {
+            width: 100%;
+            height: 400px;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .cta-btn {
+            padding: 18px 80px;
+            background: #3a3a3a;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: #4a4a4a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .about-section {
+            background: var(--bg-secondary);
+            padding: 80px 40px;
+            margin-top: 80px;
+        }
+
+        .about-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .about-content h2 {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 30px;
+        }
+
+        .about-content p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+            margin-top: 80px;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 968px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-text h1 {
+                font-size: 48px;
+            }
+
+            .hero-text .subtitle {
+                font-size: 42px;
+            }
+
+            nav {
+                gap: 20px;
+            }
+
+            .header-content {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Přepnout téma">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo">
+                <div class="logo-placeholder"></div>
+                <span>ESTRA events</span>
+            </a>
+            <nav>
+                <a href="#uvod">Úvod</a>
+                <a href="#o-nas">O nás</a>
+                <a href="#akce">Akce</a>
+                <a href="#registrace">Registrace na akci</a>
+                <a href="#fotky">Fotky z akcí</a>
+                <a href="#kontakt">Kontakt</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="#" class="btn-login">Přihlášení</a>
+                <a href="#" class="btn-register">Registrace</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-text">
+                <h1>ESTRA events</h1>
+                <span class="subtitle orange">Kreativní.</span>
+                <span class="subtitle yellow">Odvážní.</span>
+                <span class="subtitle pink">Estra.</span>
+            </div>
+            <div class="hero-image">
+                <div class="hero-image-placeholder">
+                    [Obrázek s lidmi a srdcem - nahraďte vlastním]
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Nová akce</h2>
+            <div class="event-card">
+                <div class="event-image">
+                    [Obrázek Vánoční tvoření - nahraďte vlastním]
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <div class="cta-buttons">
+                    <a href="#" class="cta-btn">Akce</a>
+                    <a href="#" class="cta-btn">Registrace na akci</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <div class="about-content">
+                <h2>Proč právě my?</h2>
+                <p>Protože mladí myslí jinak, vidíme svět po svém.</p>
+                <p>Nebojíme se zkoušet nové věci. Máme energii, chuť něco tvořit a posouvat se dál. Chceme, aby každá naše akce byla originální, plná nápadů a zábavy.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Instagram @estra_events</p>
+        <p>Facebook @estra_events</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const icon = document.getElementById('theme-icon');
+            
+            html.setAttribute('data-theme', newTheme);
+            icon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Načtení uloženého tématu
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    </script>
+</body>
+</html>
